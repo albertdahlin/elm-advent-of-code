@@ -3,18 +3,20 @@ module Year2020.Day01 exposing (..)
 import List.Extra as List
 import Result.Extra as Result
 
+
 solution =
     { solve = solve
     , title = "Report Repair"
     , tests = []
     }
 
+
 solve : String -> ( Result String String, Result String String )
 solve input =
     let
         numbers =
             String.lines input
-                |> List.map (String.toInt >> Result.fromMaybe "Only numbers")
+                |> List.map (String.toInt >> Result.fromMaybe "Only numbers allowed")
                 |> Result.combine
 
         r1 =
