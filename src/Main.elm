@@ -58,7 +58,6 @@ initModel url key =
         |> solveFor input
 
 
-
 init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
     ( initModel url key
@@ -257,22 +256,27 @@ view_Body model =
 
         Just solution ->
             Html.main_
-                [ HA.class "column pad-md space-md"
+                [ HA.class "column pad-md space-lg"
                 ]
                 [ Html.div
                     []
                     [ Html.text ("--- Day " ++ String.fromInt model.day ++ ": " ++ solution.title ++ " ---")
                     ]
-                , Html.hr [] []
                 , view_ResultRow r1 r2
                 , view_Input input
                 ]
 
 
+view_Input : String -> Html Msg
 view_Input input =
-    Html.div
-        []
-        [ Html.textarea
+    Html.label
+        [ HA.class "column space-sm"
+        ]
+        [ Html.div
+            []
+            [ Html.text "Input"
+            ]
+        , Html.textarea
             [ HA.value input
             , Events.onInput InputChanged
             ]
@@ -281,6 +285,7 @@ view_Input input =
         ]
 
 
+view_ResultRow : Result String String -> Result String String -> Html Msg
 view_ResultRow r1 r2 =
     Html.div
         [ HA.class "column space-sm"
@@ -291,6 +296,7 @@ view_ResultRow r1 r2 =
         ]
 
 
+view_Result : String -> Result String String -> Html Msg
 view_Result label result =
     Html.div
         [ HA.class "row space-sm center-y"
@@ -341,6 +347,7 @@ classIf pred name =
         HA.style "" ""
 
 
+css : String
 css =
     """
 body {
