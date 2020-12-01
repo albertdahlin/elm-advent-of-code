@@ -294,7 +294,6 @@ view_ResultRow : Result String String -> Result String String -> Html Msg
 view_ResultRow r1 r2 =
     Html.div
         [ HA.class "column space-sm"
-        , HA.style "max-width" "500px"
         ]
         [ view_Result "Part 1" r1
         , view_Result "Part 2" r2
