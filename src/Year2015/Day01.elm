@@ -3,6 +3,11 @@ module Year2015.Day01 exposing (..)
 import Result.Extra as Result
 import List.Extra as List
 
+solution =
+    { solve = solve
+    , title = "Not Quite Lisp"
+    , tests = []
+    }
 
 solve : String -> ( Result String String, Result String String )
 solve input =

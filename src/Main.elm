@@ -136,10 +136,10 @@ solveFor input model =
             Solution.forYear model.year
                 |> Dict.get model.day
         of
-            Just solveDay ->
+            Just solution ->
                 let
                     ( r1, r2 ) =
-                        solveDay input
+                        solution.solve input
                 in
                 { model
                     | solution1 = Dict.insert ( model.year, model.day ) r1 model.solution1
@@ -247,21 +247,21 @@ view_Body model =
             Dict.get ( model.year, model.day ) model.input
                 |> Maybe.withDefault ""
 
-        solutionsImplemented =
+        maybeSolution =
             Solution.forYear model.year
-                |> Dict.member model.day
+                |> Dict.get model.day
     in
-    case solutionsImplemented of
-        False ->
+    case maybeSolution of
+        Nothing ->
             Html.text ""
 
-        True ->
+        Just solution ->
             Html.main_
                 [ HA.class "column pad-md space-md"
                 ]
                 [ Html.div
                     []
-                    [ Html.text ("Day " ++ String.fromInt model.day)
+                    [ Html.text ("--- Day " ++ String.fromInt model.day ++ ": " ++ solution.title ++ " ---")
                     ]
                 , Html.hr [] []
                 , view_ResultRow r1 r2
@@ -441,7 +441,7 @@ textarea {
     border-color: #555;
     color: #ccc;
     font-family: monospace;
-    height: 10em;
+    height: 20em;
     width: 100%;
 }
 textarea:focus {

@@ -6,7 +6,10 @@ import Dict exposing (Dict)
 
 
 type alias Solution =
-    String -> ( Result String String, Result String String )
+    { solve : String -> ( Result String String, Result String String )
+    , title : String
+    , tests : List ( String, String )
+    }
 
 
 forYear : Int -> Dict Int Solution
@@ -24,13 +27,13 @@ forYear y =
 
 year2015 : Dict Int Solution
 year2015 =
-    [ ( 1, Year2015.Day01.solve )
+    [ ( 1, Year2015.Day01.solution )
     ]
         |> Dict.fromList
 
 
 year2020 : Dict Int Solution
 year2020 =
-    [ ( 1, Year2020.Day01.solve )
+    [ ( 1, Year2020.Day01.solution )
     ]
         |> Dict.fromList
