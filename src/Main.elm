@@ -154,19 +154,19 @@ parseUrl url =
     case String.split "/" (Maybe.withDefault "" url.fragment) of
         [ year ] ->
             ( String.toInt year |> Maybe.withDefault 0
-            , 0
+            , 1
             , ""
             )
 
         [ year, day ] ->
             ( String.toInt year |> Maybe.withDefault 0
-            , String.toInt day |> Maybe.withDefault 0
+            , String.toInt day |> Maybe.withDefault 1
             , ""
             )
 
         [ year, day, input ] ->
             ( String.toInt year |> Maybe.withDefault 0
-            , String.toInt day |> Maybe.withDefault 0
+            , String.toInt day |> Maybe.withDefault 1
             , Url.percentDecode input |> Maybe.withDefault ""
             )
 
@@ -199,7 +199,7 @@ view_Header model =
             (\y ->
                 Html.a
                     [ classIf (y == model.year) "active"
-                    , HA.href (toLink y Nothing "")
+                    , HA.href (toLink y (Just 1) "")
                     ]
                     [ Html.text (String.fromInt y)
                     ]
@@ -330,8 +330,7 @@ toLink y mbDay input =
                 ++ String.fromInt y
                 ++ "/"
                 ++ String.fromInt d
-                ++ "/"
-                ++ Url.percentEncode input
+                ++ if String.isEmpty input then "" else "/" ++ Url.percentEncode input
 
         Nothing ->
             "#"
@@ -355,6 +354,7 @@ body {
     font-size: 18px;
     background: #0f0f23;
     color: #cccccc;
+    line-height: 0.8;
 }
 
 
@@ -432,8 +432,8 @@ body {
 .look-like-ok
 , .look-like-err {
     background: #111;
-    border: solid 1px #666;
-    padding: 1px;
+    outline: solid 1px #333;
+    padding: 0.2em;
 }
 .look-like-ok {
     color: #009900;
