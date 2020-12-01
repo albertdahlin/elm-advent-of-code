@@ -179,10 +179,15 @@ view model =
     { title = "Advent of Code"
     , body =
         [ Html.div
-            []
+            [
+            ]
             [ Html.node "style" [] [ Html.text css ]
-            , view_Header model
-            , view_Body model
+            , Html.div
+                [ HA.class "column pad-md space-lg"
+                ]
+                [ view_Header model
+                , view_Body model
+                ]
             ]
         ]
     }
@@ -256,7 +261,7 @@ view_Body model =
 
         Just solution ->
             Html.main_
-                [ HA.class "column pad-md space-lg"
+                [ HA.class "column space-md"
                 ]
                 [ Html.div
                     []
@@ -437,6 +442,9 @@ body {
 }
 .look-like-ok {
     color: #009900;
+}
+.look-like-err {
+    color: #ffaaaa;
 }
 
 hr {
