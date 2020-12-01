@@ -261,7 +261,7 @@ view_Body model =
 
         Just solution ->
             Html.main_
-                [ HA.class "column space-md"
+                [ HA.class "column space-lg"
                 ]
                 [ Html.div
                     []
@@ -445,6 +445,10 @@ body {
 }
 .look-like-err {
     color: #ffaaaa;
+}
+.look-glowing-text {
+    color: #00cc00;
+    text-shadow: 0 0 2px #00cc00, 0 0 5px #00cc00;
 }
 
 hr {

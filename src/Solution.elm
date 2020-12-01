@@ -1,6 +1,7 @@
 module Solution exposing (..)
 
 import Year2015.Day01
+import Year2015.Day02
 import Year2020.Day01
 import Dict exposing (Dict)
 
@@ -28,6 +29,7 @@ forYear y =
 year2015 : Dict Int Solution
 year2015 =
     [ ( 1, Year2015.Day01.solution )
+    , ( 2, Year2015.Day02.solution )
     ]
         |> Dict.fromList
 
