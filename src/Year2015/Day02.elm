@@ -1,5 +1,6 @@
 module Year2015.Day02 exposing (..)
 
+import Performance exposing (Performance)
 import List.Extra as List
 import Result.Extra as Result
 import Util.Vec3 as Vec3
@@ -9,6 +10,7 @@ solution =
     { solve = solve
     , title = "I Was Told There Would Be No Math"
     , tests = []
+    , performance = Performance.Acceptable
     }
 
 

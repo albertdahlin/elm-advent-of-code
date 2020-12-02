@@ -1,5 +1,6 @@
 module Year2015.Day04 exposing (..)
 
+import Performance exposing (Performance)
 import List.Extra as List
 import Result.Extra as Result
 import MD5
@@ -9,6 +10,7 @@ solution =
     { solve = solve
     , title = "The Ideal Stocking Stuffer (slow)"
     , tests = []
+    , performance = Performance.Terrible
     }
 
 

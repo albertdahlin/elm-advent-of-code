@@ -1,5 +1,6 @@
 module Year2020.Day02 exposing (..)
 
+import Performance exposing (Performance)
 import List.Extra as List
 import Regex
 import Result.Extra as Result
@@ -9,6 +10,7 @@ solution =
     { solve = solve
     , title = "Password Philosophy"
     , tests = []
+    , performance = Performance.Acceptable
     }
 
 

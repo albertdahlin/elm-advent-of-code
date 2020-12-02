@@ -1,5 +1,6 @@
 module Year2015.Day06 exposing (..)
 
+import Performance exposing (Performance)
 import Result.Extra as Result
 import Set exposing (Set)
 import Array exposing (Array)
@@ -23,8 +24,9 @@ type Instr
 
 solution =
     { solve = solve
-    , title = "Probably a Fire Hazard"
+    , title = "Probably a Fire Hazard (slow)"
     , tests = []
+    , performance = Performance.Terrible
     }
 
 

@@ -1,5 +1,6 @@
 module Year2015.Day05 exposing (..)
 
+import Performance exposing (Performance)
 import Regex
 
 
@@ -7,6 +8,7 @@ solution =
     { solve = solve
     , title = "Doesn't He Have Intern-Elves For This?"
     , tests = []
+    , performance = Performance.Acceptable
     }
 
 

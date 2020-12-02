@@ -1,5 +1,6 @@
 module Year2020.Day01 exposing (..)
 
+import Performance exposing (Performance)
 import List.Extra as List
 import Result.Extra as Result
 
@@ -8,6 +9,7 @@ solution =
     { solve = solve
     , title = "Report Repair"
     , tests = []
+    , performance = Performance.Acceptable
     }
 
 

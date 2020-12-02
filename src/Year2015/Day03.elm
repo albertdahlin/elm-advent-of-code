@@ -1,5 +1,6 @@
 module Year2015.Day03 exposing (..)
 
+import Performance exposing (Performance)
 import List.Extra as List
 import Result.Extra as Result
 import Set exposing (Set)
@@ -10,6 +11,7 @@ solution =
     { solve = solve
     , title = "Perfectly Spherical Houses in a Vacuum"
     , tests = []
+    , performance = Performance.Acceptable
     }
 
 

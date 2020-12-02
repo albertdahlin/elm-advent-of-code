@@ -6,6 +6,7 @@ import Dict exposing (Dict)
 import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events as Events
+import Performance
 import Solution
 import Url exposing (Url)
 
@@ -132,8 +133,7 @@ solveFor input model =
 
     else
         case
-            Solution.forYear model.year
-                |> Dict.get model.day
+            Solution.for model.year model.day
         of
             Just solution ->
                 let
@@ -179,8 +179,7 @@ view model =
     { title = "Advent of Code"
     , body =
         [ Html.div
-            [
-            ]
+            []
             [ Html.node "style" [] [ Html.text css ]
             , Html.div
                 [ HA.class "column pad-md space-lg"
@@ -196,8 +195,13 @@ view model =
 view_Header : Model -> Html Msg
 view_Header model =
     let
-        availableSolutions =
-            Solution.forYear model.year
+        availableSolutions d =
+            case Solution.for model.year d of
+                Just _ ->
+                    True
+
+                Nothing ->
+                    False
     in
     [ List.range 2015 2020
         |> List.map
@@ -215,17 +219,29 @@ view_Header model =
     , List.range 1 25
         |> List.map
             (\d ->
-                (if Dict.member d availableSolutions then
-                    Html.a
+                case Solution.for model.year d of
+                    Just solution ->
+                        Html.a
+                            [ classIf (d == model.day) "active"
+                            , case solution.performance of
+                                Performance.Acceptable ->
+                                    HA.style "" ""
 
-                 else
-                    Html.div
-                )
-                    [ classIf (d == model.day) "active"
-                    , HA.href (toLink model.year (Just d) "")
-                    ]
-                    [ Html.text (String.fromInt d)
-                    ]
+                                Performance.Bad ->
+                                    HA.class "yellow"
+
+                                Performance.Terrible ->
+                                    HA.class "yellow"
+                            , HA.href (toLink model.year (Just d) "")
+                            ]
+                            [ Html.text (String.fromInt d)
+                            ]
+
+                    Nothing ->
+                        Html.div
+                            []
+                            [ Html.text (String.fromInt d)
+                            ]
             )
         |> Html.div
             [ HA.class "row space-md center-x"
@@ -252,8 +268,7 @@ view_Body model =
                 |> Maybe.withDefault ""
 
         maybeSolution =
-            Solution.forYear model.year
-                |> Dict.get model.day
+            Solution.for model.year model.day
     in
     case maybeSolution of
         Nothing ->
@@ -334,7 +349,12 @@ toLink y mbDay input =
                 ++ String.fromInt y
                 ++ "/"
                 ++ String.fromInt d
-                ++ if String.isEmpty input then "" else "/" ++ Url.percentEncode input
+                ++ (if String.isEmpty input then
+                        ""
+
+                    else
+                        "/" ++ Url.percentEncode input
+                   )
 
         Nothing ->
             "#"
@@ -413,23 +433,19 @@ body {
 }
 
 
-.look-like-link, a {
+a {
     color: #009900;
     cursor: pointer;
     text-decoration: none;
 }
-.look-like-link:not(.disabled):hover
-, a:not(.disabled):hover {
+a:not(.disabled):hover {
     color: #99ff99;
 }
-.look-like-link:not(.disabled).active
-, a:not(.disabled).active {
+a:not(.disabled).active {
     color: #99ff99;
 }
-.look-like-link.disabled
-, a.disabled {
-    color: #cccccc;
-    cursor: default;
+a.yellow {
+    color: #ffff66;
 }
 
 .glowing-green {
