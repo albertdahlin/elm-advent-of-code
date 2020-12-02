@@ -9,6 +9,7 @@ import Result.Extra as Result
 solution =
     { solve = solve
     , title = "Password Philosophy"
+    , subtitle = "Check which passwords are valid according to the Official Toboggan Corporate Policy."
     , tests = []
     , performance = Performance.Acceptable
     }

@@ -8,6 +8,7 @@ import Result.Extra as Result
 solution =
     { solve = solve
     , title = "Report Repair"
+    , subtitle = "Help the Elves in accounting finding the product of numbers that sum to 2020."
     , tests = []
     , performance = Performance.Acceptable
     }

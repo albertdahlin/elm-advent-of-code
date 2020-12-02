@@ -9,6 +9,7 @@ import MD5
 solution =
     { solve = solve
     , title = "The Ideal Stocking Stuffer (slow)"
+    , subtitle = "Help Santa to mine AdventCoins using MD5 hashes."
     , tests = []
     , performance = Performance.Terrible
     }

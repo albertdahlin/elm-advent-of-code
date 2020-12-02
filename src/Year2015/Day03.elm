@@ -10,6 +10,7 @@ import Util.Vec2 as Vec2
 solution =
     { solve = solve
     , title = "Perfectly Spherical Houses in a Vacuum"
+    , subtitle = "Santa and robo-santa delivers presents on a 2D grid."
     , tests = []
     , performance = Performance.Acceptable
     }

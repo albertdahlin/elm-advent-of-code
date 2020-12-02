@@ -25,6 +25,7 @@ type Instr
 solution =
     { solve = solve
     , title = "Probably a Fire Hazard (slow)"
+    , subtitle = "Configure lights on a 1000x1000 grid."
     , tests = []
     , performance = Performance.Terrible
     }

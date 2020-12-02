@@ -7,7 +7,7 @@ import Html exposing (Html)
 import Html.Attributes as HA
 import Html.Events as Events
 import Performance
-import Solution
+import Solution exposing (Solution)
 import Url exposing (Url)
 
 
@@ -176,7 +176,19 @@ parseUrl url =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "Advent of Code"
+    let
+        title =
+            Solution.for model.year model.day
+                |> Maybe.map .title
+                |> Maybe.withDefault ""
+    in
+    { title =
+        case Solution.for model.year model.day of
+            Just solution ->
+                "Advent of Code Day " ++ String.fromInt model.day ++ " - " ++ solution.title
+
+            Nothing ->
+                "Advent of Code"
     , body =
         [ Html.div
             []
@@ -186,6 +198,7 @@ view model =
                 ]
                 [ view_Header model
                 , view_Body model
+                , view_Footer model
                 ]
             ]
         ]
@@ -255,18 +268,6 @@ view_Header model =
 view_Body : Model -> Html Msg
 view_Body model =
     let
-        r1 =
-            Dict.get ( model.year, model.day ) model.solution1
-                |> Maybe.withDefault (Err "--none--")
-
-        r2 =
-            Dict.get ( model.year, model.day ) model.solution2
-                |> Maybe.withDefault (Err "--none--")
-
-        input =
-            Dict.get ( model.year, model.day ) model.input
-                |> Maybe.withDefault ""
-
         maybeSolution =
             Solution.for model.year model.day
     in
@@ -282,9 +283,67 @@ view_Body model =
                     []
                     [ Html.text ("--- Day " ++ String.fromInt model.day ++ ": " ++ solution.title ++ " ---")
                     ]
-                , view_ResultRow r1 r2
-                , view_Input input
+                , view_Description model solution
+                , view_Solution model
                 ]
+
+
+view_Description : Model -> Solution -> Html Msg
+view_Description model solution =
+    Html.div
+        [ HA.class "column space-md"
+        ]
+        [ Html.div [] [ Html.text solution.subtitle ]
+        , Html.div
+            [ HA.class "column"
+            ]
+            [ Html.div
+                []
+                [ Html.text "- Read on "
+                , Html.a
+                    [ HA.href (linkToAdventOfCode model.year model.day)
+                    , HA.target "_blank"
+                    ]
+                    [ Html.text "adventofcode.com"
+                    ]
+                ]
+            , Html.div
+                [
+                ]
+                [ Html.text "- Check code on "
+                , Html.a
+                    [ HA.href (linkToGithub model.year model.day)
+                    , HA.target "_blank"
+                    ]
+                    [ Html.text "github.com"
+                    ]
+                ]
+            ]
+        ]
+
+
+view_Solution : Model -> Html Msg
+view_Solution model =
+    let
+        r1 =
+            Dict.get ( model.year, model.day ) model.solution1
+                |> Maybe.withDefault (Err "--none--")
+
+        r2 =
+            Dict.get ( model.year, model.day ) model.solution2
+                |> Maybe.withDefault (Err "--none--")
+
+        input =
+            Dict.get ( model.year, model.day ) model.input
+                |> Maybe.withDefault ""
+    in
+    Html.div
+        [ HA.class "column space-md"
+        ]
+        [ Html.div [] [ Html.text "--- Solution ---" ]
+        , view_ResultRow r1 r2
+        , view_Input input
+        ]
 
 
 view_Input : String -> Html Msg
@@ -341,6 +400,15 @@ view_Result label result =
         ]
 
 
+view_Footer : Model -> Html msg
+view_Footer model =
+    Html.footer
+        [ HA.class "row footer right"
+        ]
+        [ Html.text "(c) 2015-2020 albert"
+        ]
+
+
 toLink : Int -> Maybe Int -> String -> String
 toLink y mbDay input =
     case mbDay of
@@ -361,6 +429,20 @@ toLink y mbDay input =
                 ++ String.fromInt y
 
 
+linkToAdventOfCode : Int -> Int -> String
+linkToAdventOfCode year day =
+    "https://adventofcode.com/" ++ String.fromInt year ++ "/day/" ++ String.fromInt day
+
+
+linkToGithub : Int -> Int -> String
+linkToGithub year day =
+    "https://github.com/albertdahlin/elm-advent-of-code/blob/master/src/Year"
+        ++ String.fromInt year
+        ++ "/Day"
+        ++ (String.fromInt day |> String.padLeft 2 '0')
+        ++ ".elm"
+
+
 classIf : Bool -> String -> Html.Attribute msg
 classIf pred name =
     if pred then
@@ -378,9 +460,14 @@ body {
     font-size: 18px;
     background: #0f0f23;
     color: #cccccc;
-    line-height: 0.8;
+    line-height: 1.15;
 }
 
+.footer {
+    position: fixed;
+    bottom: 0.5em;
+    align-self: flex-end;
+}
 
 .row {
     display: flex;
@@ -394,6 +481,9 @@ body {
 }
 .row.center-x {
     justify-content: center;
+}
+.row.right {
+    justify-content: flex-end;
 }
 .row.center-y {
     align-items: center;

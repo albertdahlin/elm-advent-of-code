@@ -7,6 +7,7 @@ import Regex
 solution =
     { solve = solve
     , title = "Doesn't He Have Intern-Elves For This?"
+    , subtitle = "Help Santa to classify strings as naughty or nice."
     , tests = []
     , performance = Performance.Acceptable
     }

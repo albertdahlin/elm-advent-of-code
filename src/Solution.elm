@@ -14,6 +14,7 @@ import Year2020.Day02
 type alias Solution =
     { solve : String -> ( Result String String, Result String String )
     , title : String
+    , subtitle : String
     , tests : List ( String, String )
     , performance : Performance
     }

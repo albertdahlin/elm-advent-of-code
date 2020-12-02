@@ -9,6 +9,7 @@ import Util.Vec3 as Vec3
 solution =
     { solve = solve
     , title = "I Was Told There Would Be No Math"
+    , subtitle = "The elves needs wrapping paper and ribbons for wrapping boxes."
     , tests = []
     , performance = Performance.Acceptable
     }

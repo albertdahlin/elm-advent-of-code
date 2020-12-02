@@ -8,6 +8,7 @@ import Result.Extra as Result
 solution =
     { solve = solve
     , title = "Not Quite Lisp"
+    , subtitle = "Santa walks up and down the stairs of an infinite apartment building."
     , tests = []
     , performance = Performance.Acceptable
     }
