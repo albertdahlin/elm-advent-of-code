@@ -432,6 +432,15 @@ body {
     cursor: default;
 }
 
+.glowing-green {
+    color: #00cc00;
+    text-shadow: 0 0 2px #00cc00, 0 0 5px #00cc00;
+}
+.glowing-yellow {
+    color: #ffff66;
+    text-shadow: 0 0 5px #ffff66;
+}
+
 
 .look-like-ok
 , .look-like-err {
@@ -444,10 +453,6 @@ body {
 }
 .look-like-err {
     color: #ffaaaa;
-}
-.look-glowing-text {
-    color: #00cc00;
-    text-shadow: 0 0 2px #00cc00, 0 0 5px #00cc00;
 }
 
 hr {
