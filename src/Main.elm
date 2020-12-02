@@ -405,7 +405,7 @@ view_Footer model =
     Html.footer
         [ HA.class "row footer right"
         ]
-        [ Html.text "(c) 2015-2020 albert"
+        [ Html.text "albertdahlin.com"
         ]
 
 
