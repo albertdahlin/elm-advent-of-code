@@ -22,8 +22,8 @@ solve input =
         lines =
             String.lines input
 
-        rowsOfIndicies : Array (Set Int)
-        rowsOfIndicies =
+        rowsOfIndiciesWhereTreesOccur : Array (Set Int)
+        rowsOfIndiciesWhereTreesOccur =
             lines
                 |> List.map
                     (String.toList
@@ -53,7 +53,7 @@ solve input =
 
         countTreesFrom : Vec2 Int -> Vec2 Int -> Int
         countTreesFrom ( rowPos, colPos ) ( rowInc, colInc ) =
-            case Array.get rowPos rowsOfIndicies of
+            case Array.get rowPos rowsOfIndiciesWhereTreesOccur of
                 Just indicesWhereTreesOccur ->
                     if Set.member colPos indicesWhereTreesOccur then
                         1
