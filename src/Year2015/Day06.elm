@@ -1,10 +1,10 @@
 module Year2015.Day06 exposing (..)
 
-import Performance exposing (Performance)
-import Result.Extra as Result
-import Set exposing (Set)
 import Array exposing (Array)
 import Array.Extra as Array
+import Parser exposing ((|.), (|=), Parser)
+import Performance exposing (Performance)
+import Result.Extra as Result
 import Util.Vec2 as Vec2
 
 
@@ -35,9 +35,8 @@ solve : String -> ( Result String String, Result String String )
 solve input =
     let
         instructions =
-            String.lines input
-                |> List.map parseLine
-                |> Result.combine
+            Parser.run parseManyInstructions input
+                |> Result.mapError Debug.toString
 
         r1 =
             instructions
@@ -59,15 +58,23 @@ solve input =
                                         to
                                         grid2
 
-
                                 Toggle from to ->
                                     forEachPoint
-                                        (\x y -> Array.update (x + y * 1000) (\n -> if n == 0 then 1 else 0))
+                                        (\x y ->
+                                            Array.update (x + y * 1000)
+                                                (\n ->
+                                                    if n == 0 then
+                                                        1
+
+                                                    else
+                                                        0
+                                                )
+                                        )
                                         from
                                         to
                                         grid2
                         )
-                        (Array.repeat (1000*1000) 0)
+                        (Array.repeat (1000 * 1000) 0)
                         >> Array.foldl (+) 0
                         >> (\sz -> String.fromInt sz)
                     )
@@ -92,7 +99,6 @@ solve input =
                                         to
                                         grid2
 
-
                                 Toggle from to ->
                                     forEachPoint
                                         (\x y -> Array.update (x + y * 1000) ((+) 2))
@@ -100,7 +106,7 @@ solve input =
                                         to
                                         grid2
                         )
-                        (Array.repeat (1000*1000) 0)
+                        (Array.repeat (1000 * 1000) 0)
                         >> Array.foldl (+) 0
                         >> (\sz -> String.fromInt sz)
                     )
@@ -129,34 +135,65 @@ forEachPoint fn ( x1, y1 ) ( x2, y2 ) grid =
             grid
 
 
-parseLine : String -> Result String Instr
-parseLine line =
-    case String.split " " line of
-        [ "turn", "on", from, "through", to ] ->
-            Result.map2
-                (\f t -> TurnOn f t)
-                (parseVec from)
-                (parseVec to)
-
-        [ "toggle", from, "through", to ] ->
-            Result.map2
-                (\f t -> Toggle f t)
-                (parseVec from)
-                (parseVec to)
-
-        [ "turn", "off", from, "through", to ] ->
-            Result.map2
-                (\f t -> TurnOff f t)
-                (parseVec from)
-                (parseVec to)
-
-        _ ->
-            Err ("Wrong format: " ++ line)
+parseManyInstructions : Parser (List Instr)
+parseManyInstructions =
+    Parser.loop [] instructionsHelp
 
 
-parseVec : String -> Result String Vec2
-parseVec str =
-    String.split "," str
-        |> Vec2.fromList
-        |> Maybe.andThen (Vec2.filterMap String.toInt)
-        |> Result.fromMaybe "Not a vector"
+instructionsHelp : List Instr -> Parser (Parser.Step (List Instr) (List Instr))
+instructionsHelp revInstr =
+    Parser.oneOf
+        [ Parser.succeed (\instr -> Parser.Loop (instr :: revInstr))
+            |= parseInstruction
+            |. Parser.spaces
+        , Parser.succeed ()
+            |> Parser.map (\_ -> Parser.Done (List.reverse revInstr))
+        ]
+
+
+parseInstruction : Parser Instr
+parseInstruction =
+    Parser.oneOf
+        [ Parser.keyword "turn"
+            |. Parser.spaces
+            |> Parser.andThen
+                (\_ ->
+                    Parser.oneOf
+                        [ Parser.succeed TurnOn
+                            |. Parser.keyword "on"
+                            |. Parser.spaces
+                            |= parseVec2
+                            |. Parser.spaces
+                            |. Parser.keyword "through"
+                            |. Parser.spaces
+                            |= parseVec2
+                        , Parser.succeed TurnOff
+                            |. Parser.keyword "off"
+                            |. Parser.spaces
+                            |= parseVec2
+                            |. Parser.spaces
+                            |. Parser.keyword "through"
+                            |. Parser.spaces
+                            |= parseVec2
+                        ]
+                )
+        , Parser.succeed Toggle
+            |. Parser.keyword "toggle"
+            |. Parser.spaces
+            |= parseVec2
+            |. Parser.spaces
+            |. Parser.keyword "through"
+            |. Parser.spaces
+            |= parseVec2
+        ]
+
+
+parseVec2 : Parser Vec2
+parseVec2 =
+    Parser.succeed Tuple.pair
+        |= Parser.int
+        |. Parser.spaces
+        |. Parser.symbol ","
+        |. Parser.spaces
+        |= Parser.int
+
