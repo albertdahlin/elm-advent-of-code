@@ -36,7 +36,7 @@ solve input =
     let
         instructions =
             Parser.run parseManyInstructions input
-                |> Result.mapError Debug.toString
+                |> Result.mapError (\_ -> "Error") --TODO
 
         r1 =
             instructions
