@@ -69,11 +69,15 @@ solve input =
 type Expr
     = Val Int
     | Var String
-    | And Expr Expr
-    | Or Expr Expr
-    | RShift Int Expr
-    | LShift Int Expr
+    | BinOp BinOp Expr Expr
     | Not Expr
+
+
+type BinOp
+    = And
+    | Or
+    | RShift
+    | LShift
 
 
 type alias Env =
@@ -98,7 +102,7 @@ eval expr env =
                 Nothing ->
                     ( expr, env )
 
-        And e1 e2 ->
+        BinOp binOp e1 e2 ->
             let
                 ( r1, env1 ) =
                     eval e1 env
@@ -107,44 +111,33 @@ eval expr env =
                     eval e2 env1
             in
             ( Maybe.map2
-                (\a b -> Bitwise.and a b |> Val)
+                (\a b ->
+                    case binOp of
+                        And ->
+                            Bitwise.and a b
+                                |> toInt16
+                                |> Val
+
+                        Or ->
+                            Bitwise.or a b
+                                |> toInt16
+                                |> Val
+
+                        RShift ->
+                            Bitwise.shiftRightBy b a
+                                |> toInt16
+                                |> Val
+
+                        LShift ->
+                            Bitwise.shiftLeftBy b a
+                                |> toInt16
+                                |> Val
+                )
                 (toInt r1)
                 (toInt r2)
                 |> Maybe.withDefault expr
             , env2
             )
-
-        Or e1 e2 ->
-            let
-                ( r1, env1 ) =
-                    eval e1 env
-
-                ( r2, env2 ) =
-                    eval e2 env1
-            in
-            ( Maybe.map2
-                (\a b -> Bitwise.or a b |> Val)
-                (toInt r1)
-                (toInt r2)
-                |> Maybe.withDefault expr
-            , env2
-            )
-
-        RShift n e1 ->
-            eval e1 env
-                |> Tuple.mapFirst
-                    (toInt
-                        >> Maybe.map (Bitwise.shiftRightBy n >> toInt16 >> Val)
-                        >> Maybe.withDefault expr
-                    )
-
-        LShift n e1 ->
-            eval e1 env
-                |> Tuple.mapFirst
-                    (toInt
-                        >> Maybe.map (Bitwise.shiftLeftBy n >> toInt16 >> Val)
-                        >> Maybe.withDefault expr
-                    )
 
         Not ex ->
             eval ex env
@@ -198,7 +191,12 @@ parseExpr =
                 (\expr ->
                     Parser.oneOf
                         [ parseAssign expr
-                        , parseBinOp expr
+                        , Parser.oneOf
+                            [ parseBinOp "AND" (BinOp And expr)
+                            , parseBinOp "OR" (BinOp Or expr)
+                            , parseBinOp "RSHIFT" (BinOp RShift expr)
+                            , parseBinOp "LSHIFT" (BinOp LShift expr)
+                            ]
                             |> Parser.andThen parseAssign
                         ]
                 )
@@ -222,77 +220,30 @@ parseNot =
     Parser.succeed Not
         |. Parser.keyword "NOT"
         |. Parser.spaces
-        |= Parser.lazy (\_ -> parseValOrVar)
-        |. Parser.spaces
-
-
-parseVal : Parser Expr
-parseVal =
-    Parser.succeed Val
-        |= Parser.int
-        |. Parser.spaces
-
-
-parseVar : Parser Expr
-parseVar =
-    Parser.succeed Var
-        |= Parser.variable
-            { start = Char.isLower
-            , inner = Char.isLower
-            , reserved = Set.empty
-            }
+        |= parseValOrVar
         |. Parser.spaces
 
 
 parseValOrVar : Parser Expr
 parseValOrVar =
     Parser.oneOf
-        [ parseVar
-        , parseVal
+        [ Parser.succeed Var
+            |= Parser.variable
+                { start = Char.isLower
+                , inner = Char.isLower
+                , reserved = Set.empty
+                }
+            |. Parser.spaces
+        , Parser.succeed Val
+            |= Parser.int
+            |. Parser.spaces
         ]
 
 
-parseBinOp : Expr -> Parser Expr
-parseBinOp expr =
-    Parser.oneOf
-        [ parseAnd expr
-        , parseOr expr
-        , parseRShift expr
-        , parseLShift expr
-        ]
-
-
-parseAnd : Expr -> Parser Expr
-parseAnd expr =
-    Parser.succeed (And expr)
-        |. Parser.keyword "AND"
+parseBinOp : String -> (Expr -> Expr) -> Parser Expr
+parseBinOp keyword toExpr =
+    Parser.succeed toExpr
+        |. Parser.keyword keyword
         |. Parser.spaces
         |= parseValOrVar
-        |. Parser.spaces
-
-
-parseOr : Expr -> Parser Expr
-parseOr expr =
-    Parser.succeed (Or expr)
-        |. Parser.keyword "OR"
-        |. Parser.spaces
-        |= parseValOrVar
-        |. Parser.spaces
-
-
-parseRShift : Expr -> Parser Expr
-parseRShift expr =
-    Parser.succeed (\n -> RShift n expr)
-        |. Parser.keyword "RSHIFT"
-        |. Parser.spaces
-        |= Parser.int
-        |. Parser.spaces
-
-
-parseLShift : Expr -> Parser Expr
-parseLShift expr =
-    Parser.succeed (\n -> LShift n expr)
-        |. Parser.keyword "LSHIFT"
-        |. Parser.spaces
-        |= Parser.int
         |. Parser.spaces
