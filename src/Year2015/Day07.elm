@@ -11,7 +11,7 @@ import Set exposing (Set)
 solution =
     { solve = solve
     , title = "Some Assembly Required"
-    , subtitle = ""
+    , subtitle = "Help Bobby Tables to connect his logic gates"
     , tests = []
     , performance = Performance.Acceptable
     }
