@@ -5,6 +5,7 @@ import Array.Extra as Array
 import Parser exposing ((|.), (|=), Parser)
 import Performance exposing (Performance)
 import Result.Extra as Result
+import Util.Parser
 import Util.Vec2 as Vec2
 
 
@@ -36,7 +37,7 @@ solve input =
     let
         instructions =
             Parser.run parseManyInstructions input
-                |> Result.mapError (\_ -> "Error") --TODO
+                |> Result.mapError Util.Parser.firstErrorMsg
 
         r1 =
             instructions
@@ -196,4 +197,3 @@ parseVec2 =
         |. Parser.symbol ","
         |. Parser.spaces
         |= Parser.int
-

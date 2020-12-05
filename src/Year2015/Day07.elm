@@ -3,6 +3,7 @@ module Year2015.Day07 exposing (..)
 import Bitwise
 import Dict exposing (Dict)
 import Parser exposing ((|.), (|=), Parser)
+import Util.Parser
 import Performance exposing (Performance)
 import Result.Extra as Result
 import Set exposing (Set)
@@ -22,7 +23,7 @@ solve input =
     let
         instr =
             Parser.run parser input
-                |> Result.mapError Debug.toString
+                |> Result.mapError (Util.Parser.firstErrorMsg)
 
         r1 =
             instr
