@@ -2,11 +2,11 @@ module Year2015.Day07 exposing (..)
 
 import Bitwise
 import Dict exposing (Dict)
+import Monad.Result.State as State
 import Parser exposing ((|.), (|=), Parser)
-import Util.Parser
 import Performance exposing (Performance)
-import Result.Extra as Result
 import Set exposing (Set)
+import Util.Parser
 
 
 solution =
@@ -23,18 +23,18 @@ solve input =
     let
         instr =
             Parser.run parser input
-                |> Result.mapError (Util.Parser.firstErrorMsg)
+                |> Result.mapError Util.Parser.firstErrorMsg
 
         r1 =
             instr
-                |> Result.map
+                |> Result.andThen
                     (\ins ->
                         let
                             env =
                                 Dict.fromList ins
                         in
-                        eval (Var "a") env
-                            |> Tuple.first
+                        evalToInt (Var "a")
+                            |> State.finalValue env
                     )
 
         r2 =
@@ -43,20 +43,18 @@ solve input =
                     let
                         env =
                             Dict.fromList ins
-                                |> Dict.insert "b" valueOfA
+                                |> Dict.insert "b" (Val valueOfA)
                     in
-                    eval (Var "a") env
-                        |> Tuple.first
+                    evalToInt (Var "a")
+                        |> State.finalValue env
                 )
                 instr
                 r1
+                |> Result.andThen identity
 
         format =
             Result.map
-                (toInt
-                    >> Maybe.map (\i -> String.fromInt i ++ " is provided to wire \"a\"")
-                    >> Maybe.withDefault "Could not evaluate"
-                )
+                (\i -> String.fromInt i ++ " is provided to wire \"a\"")
     in
     ( format r1
     , format r2
@@ -85,78 +83,70 @@ type alias Env =
     Dict String Expr
 
 
-eval : Expr -> Env -> ( Expr, Env )
-eval expr env =
+{-| State Monad wrapped in Result
+-}
+type alias StateMonad a =
+    State.State String Env a
+
+{-|
+Evaluate starting at an expression (Var "a").
+
+Whenever a variable lookup is evaluated (Var <name>) the Env dict is
+update with the result to avoid evaluating the same expr multiple times.
+This improves performance a lot.
+
+This is solved using a state monad wrapped in Result which
+threads `Env` through all computations also handles the case
+when an expr can not be evaluated to `Int`.
+-}
+evalToInt : Expr -> StateMonad Int
+evalToInt expr =
     case expr of
         Val i ->
-            ( Val i, env )
+            State.return i
 
         Var key ->
-            case Dict.get key env of
-                Just ex ->
-                    let
-                        ( expr1, env1 ) =
-                            eval ex env
-                    in
-                    ( expr1, Dict.insert key expr1 env1 )
+            State.get
+                |> State.map (Dict.get key)
+                |> State.andThen
+                    (\mbExpr ->
+                        case mbExpr of
+                            Just ex ->
+                                evalToInt ex
+                                    |> State.update
+                                        (\i env -> Dict.insert key (Val i) env)
 
-                Nothing ->
-                    ( expr, env )
+                            Nothing ->
+                                State.fail ("Undefined var: " ++ key)
+                    )
 
         BinOp binOp e1 e2 ->
-            let
-                ( r1, env1 ) =
-                    eval e1 env
-
-                ( r2, env2 ) =
-                    eval e2 env1
-            in
-            ( Maybe.map2
+            State.map2
                 (\a b ->
                     case binOp of
                         And ->
                             Bitwise.and a b
                                 |> toInt16
-                                |> Val
 
                         Or ->
                             Bitwise.or a b
                                 |> toInt16
-                                |> Val
 
                         RShift ->
                             Bitwise.shiftRightBy b a
                                 |> toInt16
-                                |> Val
 
                         LShift ->
                             Bitwise.shiftLeftBy b a
                                 |> toInt16
-                                |> Val
                 )
-                (toInt r1)
-                (toInt r2)
-                |> Maybe.withDefault expr
-            , env2
-            )
+                (evalToInt e1)
+                (evalToInt e2)
 
         Not ex ->
-            eval ex env
-                |> Tuple.mapFirst
-                    (toInt
-                        >> Maybe.map (Bitwise.complement >> toInt16 >> Val)
-                        >> Maybe.withDefault expr
-                    )
-
-
-toInt : Expr -> Maybe Int
-toInt expr =
-    case expr of
-        Val i ->
-            Just i
-
-        _ ->
-            Nothing
+            evalToInt ex
+                |> State.map
+                    (Bitwise.complement >> toInt16)
 
 
 toInt16 : Int -> Int
