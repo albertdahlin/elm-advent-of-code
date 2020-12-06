@@ -13,6 +13,7 @@ import Year2020.Day02
 import Year2020.Day03
 import Year2020.Day04
 import Year2020.Day05
+import Year2020.Day06
 
 
 type alias Solution =
@@ -69,6 +70,9 @@ for year day =
 
                 5 ->
                     Just Year2020.Day05.solution
+
+                6 ->
+                    Just Year2020.Day06.solution
 
                 _ ->
                     Nothing
