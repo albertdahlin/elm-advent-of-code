@@ -21,17 +21,17 @@ solution =
 solve : String -> ( Result String String, Result String String )
 solve input =
     let
-        instr =
+        listOfInstructions =
             Parser.run parser input
                 |> Result.mapError Util.Parser.firstErrorMsg
 
         r1 =
-            instr
+            listOfInstructions
                 |> Result.andThen
-                    (\ins ->
+                    (\list ->
                         let
                             env =
-                                Dict.fromList ins
+                                Dict.fromList list
                         in
                         evalToInt (Var "a")
                             |> State.finalValue env
@@ -39,16 +39,16 @@ solve input =
 
         r2 =
             Result.map2
-                (\ins valueOfA ->
+                (\list valueOfA ->
                     let
                         env =
-                            Dict.fromList ins
+                            Dict.fromList list
                                 |> Dict.insert "b" (Val valueOfA)
                     in
                     evalToInt (Var "a")
                         |> State.finalValue env
                 )
-                instr
+                listOfInstructions
                 r1
                 |> Result.andThen identity
 
@@ -92,11 +92,11 @@ type alias StateMonad a =
 Evaluate starting at an expression (Var "a").
 
 Whenever a variable lookup is evaluated (Var <name>) the Env dict is
-update with the result to avoid evaluating the same expr multiple times.
+updated with the result to avoid evaluating the same expr multiple times.
 This improves performance a lot.
 
 This is solved using a state monad wrapped in Result which
-threads `Env` through all computations also handles the case
+threads `Env` through all computations and also handles the case
 when an expr can not be evaluated to `Int`.
 -}
 evalToInt : Expr -> StateMonad Int
