@@ -24,3 +24,7 @@ filterMap : (a -> Maybe b) -> Vec2 a -> Maybe (Vec2 b)
 filterMap fn ( x, y ) =
     Maybe.map2 Tuple.pair (fn x) (fn y)
 
+
+sum : Vec2 number -> number
+sum ( x, y ) =
+    x + y
