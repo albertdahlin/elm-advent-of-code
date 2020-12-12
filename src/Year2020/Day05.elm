@@ -14,9 +14,15 @@ solution =
     }
 
 
+type Part
+    = High
+    | Low
+
 solve : String -> ( Result String String, Result String String )
 solve input =
     let
+        -- List ( row, col )
+        boardingPasses : Result String (List ( Int, Int ))
         boardingPasses =
             String.lines input
                 |> List.map parseBoardingPass
@@ -93,11 +99,6 @@ findFirstNonConsecutiveFrom prev list =
 
             else
                 Just x
-
-
-type Part
-    = High
-    | Low
 
 
 toSeatId : ( Int, Int ) -> Int

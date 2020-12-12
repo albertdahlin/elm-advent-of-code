@@ -21,6 +21,7 @@ solution =
 solve : String -> ( Result String String, Result String String )
 solve input =
     let
+        allNumbers : Result String (List Int)
         allNumbers =
             String.lines input
                 |> List.map (String.toInt >> Result.fromMaybe "Input is not numbers")

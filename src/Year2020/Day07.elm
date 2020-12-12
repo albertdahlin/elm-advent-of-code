@@ -29,6 +29,7 @@ type alias Rule =
 solve : String -> ( Result String String, Result String String )
 solve input =
     let
+        rules : Result String (List Rule)
         rules =
             parse input
 

@@ -17,6 +17,7 @@ solution =
 solve : String -> ( Result String String, Result String String )
 solve input =
     let
+        incPerStep : Result String (List Int)
         incPerStep =
             String.lines input
                 |> List.map (String.toInt >> Result.fromMaybe "Input must be numbers")
@@ -34,6 +35,7 @@ solve input =
                         >> (++) [ 3 ]
                     )
 
+        r1 : Result String Int
         r1 =
             incPerStep
                 |> Result.map
@@ -41,6 +43,7 @@ solve input =
                         >> (\( ones, threes ) -> ones * threes)
                     )
 
+        r2 : Result String Int
         r2 =
             incPerStep
                 |> Result.map
@@ -94,19 +97,19 @@ groupByValueHelper count prev list =
 
 
 {-
-   1
+   1 : n=1 : p=1
        x
-   1 1
+   1 1 : N=2 : p=2
        x x
        x 1
 
-   1 1 1
+   1 1 1 : n=3 : p = 4
        x x x
        x x 1
        x 1 x
        x 1 1
 
-   1 1 1 1
+   1 1 1 1 : n=4 : p = 8 - 1 = 7
        (x x x x)
        x x x 1
        x x 1 x
@@ -116,7 +119,7 @@ groupByValueHelper count prev list =
        x 1 1 x
        x 1 1 1
 
-   1 1 1 1 1
+   1 1 1 1 1 : n=5 : p = 16 - 2 = 14
        (x x x x x)
        (x x x x 1)
        x x x 1 x
@@ -137,7 +140,7 @@ groupByValueHelper count prev list =
        x 1 1 1 1
 
 
-   1 1 1 1 1 1
+   1 1 1 1 1 1 : n=6 : p = 32 - 5 = 27
        (x x x x x x)
        (x x x x x 1)
        (x x x x 1 x)
@@ -171,9 +174,46 @@ groupByValueHelper count prev list =
        x 1 1 1 1 x
        x 1 1 1 1 1
 
-   prob n =
-       2 ^ n - ?
 
+
+4      (x x x x)
+
+5      (x x x x x)
+       (x x x x 1)
+
+
+       (x x x x 1 x)
+       (x x x x 1 1)
+
+       (x x x x x 1)
+       (x x x x x x)
+
+6      (x 1 x x x x)
+
+        x x x 1 x x
+        x x x 1 x 1
+        x x x 1 1 x
+        x x x 1 1 1
+
+        1 x x x x x
+        1 x x x x 1
+
+        1 1 x x x x
+        1 1 x x x x
+
+
+   prob n =
+       2 ^ (n - 1)
+
+       ((n - 2 ^ (n - 4))
+
+       (n - 3) * 2^(n - 4) om n >= 4
+
+       (5 - 3) * 2^(5 - 5) = 4
+       (6 - 3) * 2^(6 - 5) = 6
+
+       bitarKvar = n - 5
+       antal = n - 3
 -}
 
 

@@ -22,6 +22,7 @@ type alias Passport =
 solve : String -> ( Result String String, Result String String )
 solve input =
     let
+        passports : List Passport
         passports =
             String.split "\n\n" input
                 |> List.map parsePassport

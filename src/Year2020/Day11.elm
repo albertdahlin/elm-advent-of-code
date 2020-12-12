@@ -27,6 +27,7 @@ type Cell
 solve : String -> ( Result String String, Result String String )
 solve input =
     let
+        result : Result String (Grid Cell)
         result =
             String.lines input
                 |> List.map
@@ -42,6 +43,7 @@ solve input =
                         >> Result.fromMaybe "Mismatching row length"
                     )
 
+        r1 : Result String Int
         r1 =
             Result.map
                 (\grid ->
@@ -55,6 +57,7 @@ solve input =
                 )
                 result
 
+        r2 : Result String Int
         r2 =
             Result.map
                 (\grid ->

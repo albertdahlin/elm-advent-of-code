@@ -18,6 +18,7 @@ solution =
 solve : String -> ( Result String String, Result String String )
 solve input =
     let
+        numbers : Result String (List Int)
         numbers =
             String.lines input
                 |> List.map (String.toInt >> Result.fromMaybe "Only numbers allowed")

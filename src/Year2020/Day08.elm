@@ -30,6 +30,7 @@ type alias Program =
 solve : String -> ( Result String String, Result String String )
 solve input =
     let
+        program : Result String Program
         program =
             parse input
                 |> Result.map
