@@ -28,3 +28,44 @@ filterMap fn ( x, y ) =
 sum : Vec2 number -> number
 sum ( x, y ) =
     x + y
+
+
+manhattanDistance : Vec2 number -> number
+manhattanDistance ( x, y ) =
+    abs x + abs y
+
+
+scale : number -> Vec2 number -> Vec2 number
+scale s ( x, y ) =
+    ( x * s
+    , y * s
+    )
+
+
+toFloat : Vec2 Int -> Vec2 Float
+toFloat =
+    map Basics.toFloat
+
+
+round : Vec2 Float -> Vec2 Int
+round =
+    map Basics.round
+
+
+map : (a -> b) -> Vec2 a -> Vec2 b
+map fn ( x, y ) =
+    ( fn x
+    , fn y
+    )
+
+
+fromAngle : Float -> Vec2 Float
+fromAngle rad =
+    ( cos rad
+    , sin rad
+    )
+
+
+angleOf : Vec2 Float -> Float
+angleOf ( x, y ) =
+    atan2 y x
