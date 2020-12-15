@@ -17,10 +17,12 @@
             "elm-community/intdict": "3.0.0",
             "elm-community/list-extra": "8.2.4",
             "elm-community/result-extra": "2.4.0",
+            "malaire/elm-uint64": "2.0.0",
             "rtfeldman/elm-hex": "1.0.0",
             "truqu/elm-md5": "1.1.0"
         },
         "indirect": {
+            "elm/bytes": "1.0.8",
             "elm/time": "1.0.0",
             "elm/virtual-dom": "1.0.2",
             "zwilias/elm-utf-tools": "2.0.1"
