@@ -61,13 +61,13 @@ solve input =
                 |> Maybe.map
                     (\( a, b ) -> a * b)
                 |> Result.fromMaybe "No solution"
+                |> Result.map String.fromInt
 
         r2 =
-            numbers
-                |> Ok
+            Err "Not implemented"
     in
-    ( Result.map Debug.toString r1
-    , Result.map Debug.toString r2
+    ( r1
+    , r2
     )
 
 {-

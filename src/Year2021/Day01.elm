@@ -7,7 +7,7 @@ import Result.Extra as Result
 solution =
     { solve = solve
     , title = "Sonar Sweep"
-    , subtitle = "Scan the sea floor and filter the data"
+    , subtitle = "Scan the sea floor and filter the data."
     , tests = []
     , performance = Performance.Acceptable
     }
