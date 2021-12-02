@@ -2,6 +2,8 @@ module Year2021.Day01 exposing (..)
 
 import Performance exposing (Performance)
 import Result.Extra as Result
+import Parser exposing ((|.), (|=), Parser)
+import Util.Parser
 
 
 solution =
@@ -17,9 +19,9 @@ solve : String -> ( Result String String, Result String String )
 solve input =
     let
         numbers =
-            String.split "\n" input
-                |> List.map (String.toInt >> Result.fromMaybe "Only numbers separated by newline allowed.")
-                |> Result.combine
+            input
+                |> Parser.run (Util.Parser.parseRowsUsing Parser.int)
+                |> Result.mapError Util.Parser.firstErrorMsg
 
         r1 =
             numbers
