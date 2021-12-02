@@ -30,6 +30,11 @@ sum ( x, y ) =
     x + y
 
 
+product : Vec2 number -> number
+product ( x, y ) =
+    x * y
+
+
 manhattanDistance : Vec2 number -> number
 manhattanDistance ( x, y ) =
     abs x + abs y
