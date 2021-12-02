@@ -1,6 +1,6 @@
 module Util.Parser exposing (..)
 
-import Parser
+import Parser exposing ((|.), (|=), Parser)
 
 
 firstErrorMsg : List Parser.DeadEnd -> String
@@ -24,6 +24,7 @@ errorMsg list =
         list
 
 
+problemToString : Parser.Problem -> String
 problemToString problem =
     case problem of
         Parser.Expecting str ->
@@ -67,3 +68,16 @@ problemToString problem =
 
         Parser.BadRepeat ->
             "Bad Repeat"
+
+
+parseRowsUsing : Parser a -> Parser (List a)
+parseRowsUsing parser =
+    Parser.loop []
+        (\xs ->
+            Parser.oneOf
+                [ Parser.succeed (\x -> Parser.Loop (x :: xs))
+                    |= parser
+                    |. Parser.chompWhile (\c -> c == '\n' || c == '\u{000D}')
+                , Parser.succeed (Parser.Done <| List.reverse xs)
+                ]
+        )

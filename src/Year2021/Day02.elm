@@ -1,7 +1,9 @@
 module Year2021.Day02 exposing (..)
 
+import Parser exposing ((|.), (|=), Parser)
 import Performance exposing (Performance)
 import Result.Extra as Result
+import Util.Parser
 import Util.Vec2 as Vec2 exposing (Vec2)
 import Util.Vec3 as Vec3 exposing (Vec3)
 
@@ -19,7 +21,8 @@ solve : String -> ( Result String String, Result String String )
 solve input =
     let
         instr =
-            parseInput input
+            Parser.run (Util.Parser.parseRowsUsing dirParser) input
+                |> Result.mapError Util.Parser.firstErrorMsg
 
         r1 =
             instr
@@ -48,37 +51,18 @@ type Dir
     | Forward Int
 
 
-parseInput : String -> Result String (List Dir)
-parseInput str =
-    String.lines str
-        |> List.map (String.split " " >> parseWords)
-        |> Result.combine
-
-
-parseWords : List String -> Result String Dir
-parseWords words =
-    case words of
-        [ dir, n ] ->
-            case String.toInt n of
-                Just i ->
-                    case dir of
-                        "up" ->
-                            Ok (Up i)
-
-                        "down" ->
-                            Ok (Down i)
-
-                        "forward" ->
-                            Ok (Forward i)
-
-                        _ ->
-                            Err "Only up, down, forward is allowed"
-
-                _ ->
-                    Err "Length is not an integer"
-
-        _ ->
-            Err "Wrong format on row"
+dirParser : Parser Dir
+dirParser =
+    Parser.oneOf
+        [ Parser.keyword "up"
+            |> Parser.map (always Up)
+        , Parser.keyword "down"
+            |> Parser.map (always Down)
+        , Parser.keyword "forward"
+            |> Parser.map (always Forward)
+        ]
+        |. Parser.spaces
+        |= Parser.int
 
 
 move1 : Dir -> Vec2 Int -> Vec2 Int
