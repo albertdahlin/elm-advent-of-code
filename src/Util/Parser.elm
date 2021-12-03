@@ -3,6 +3,12 @@ module Util.Parser exposing (..)
 import Parser exposing ((|.), (|=), Parser)
 
 
+run : Parser a -> String -> Result String a
+run parser str =
+    Parser.run parser str
+        |> Result.mapError firstErrorMsg
+
+
 firstErrorMsg : List Parser.DeadEnd -> String
 firstErrorMsg list =
     errorMsg list
@@ -81,3 +87,11 @@ parseRowsUsing parser =
                 , Parser.succeed (Parser.Done <| List.reverse xs)
                 ]
         )
+
+
+alpha : Parser String
+alpha =
+    Parser.succeed ()
+        |. Parser.chompIf Char.isAlpha
+        |. Parser.chompWhile Char.isAlpha
+        |> Parser.getChompedString

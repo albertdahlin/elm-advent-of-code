@@ -9,6 +9,7 @@ import Year2015.Day05
 import Year2015.Day06
 import Year2015.Day07
 import Year2015.Day08
+import Year2015.Day09
 import Year2020.Day01
 import Year2020.Day02
 import Year2020.Day03
@@ -66,6 +67,9 @@ for year day =
 
                 8 ->
                     Just Year2015.Day08.solution
+
+                9 ->
+                    Just Year2015.Day09.solution
 
                 _ ->
                     Nothing
