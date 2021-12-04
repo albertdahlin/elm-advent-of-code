@@ -299,24 +299,26 @@ view_Description model solution =
             ]
             [ Html.div
                 []
-                [ Html.text "- Read on "
+                [ Html.text "- Read the "
                 , Html.a
                     [ HA.href (linkToAdventOfCode model.year model.day)
                     , HA.target "_blank"
                     ]
-                    [ Html.text "adventofcode.com"
+                    [ Html.text "problem description"
                     ]
+                , Html.text " on adventofcode.com"
                 ]
             , Html.div
                 [
                 ]
-                [ Html.text "- Check code on "
+                [ Html.text "- Check my "
                 , Html.a
                     [ HA.href (linkToGithub model.year model.day)
                     , HA.target "_blank"
                     ]
-                    [ Html.text "github.com"
+                    [ Html.text "solution"
                     ]
+                , Html.text " on github.com"
                 ]
             ]
         ]
