@@ -95,3 +95,9 @@ alpha =
         |. Parser.chompIf Char.isAlpha
         |. Parser.chompWhile Char.isAlpha
         |> Parser.getChompedString
+
+
+newLine : Parser ()
+newLine =
+    Parser.chompIf (\c -> c == '\n')
+
