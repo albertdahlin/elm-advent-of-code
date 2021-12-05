@@ -9,29 +9,33 @@ import Util.Vec2 as Vec2
 
 solution =
     { solve = solve
-    , title = "Giant Squid"
-    , subtitle = "Play bingo with a giant squid."
+    , title = "Hydrothermal Venture"
+    , subtitle = "Navigate across a field of hydrothermal vents by plotting lines."
     , tests = []
     , performance = Performance.Acceptable
     }
-
-
-type alias Point =
-    ( Int, Int )
 
 
 type alias Line =
     ( Point, Point )
 
 
+type alias Point =
+    ( Int, Int )
+
+
 solve : String -> ( Result String String, Result String String )
 solve input =
     let
-        result =
-            Util.Parser.run (Util.Parser.parseRowsUsing lineParser |. Parser.end) input
+        parsedLines =
+            Util.Parser.run
+                (Util.Parser.parseRowsUsing lineParser
+                    |. Parser.end
+                )
+                input
 
         r1 =
-            result
+            parsedLines
                 |> Result.map
                     (\lines ->
                         lines
@@ -43,7 +47,7 @@ solve input =
                     )
 
         r2 =
-            result
+            parsedLines
                 |> Result.map
                     (\lines ->
                         lines
@@ -63,21 +67,25 @@ solve input =
 -- PLOT
 
 
+{-| Plot lines in a sparse grid.
+-}
 plotLines : List Line -> Dict Point Int
 plotLines lines =
     List.foldl
         (\line dict ->
             toPoints line
                 |> List.foldl
-                    addPoint
+                    incPointByOne
                     dict
         )
         Dict.empty
         lines
 
 
-addPoint : Point -> Dict Point Int -> Dict Point Int
-addPoint point dict =
+{-| Increase value for a point by 1.
+-}
+incPointByOne : Point -> Dict Point Int -> Dict Point Int
+incPointByOne point dict =
     Dict.update
         point
         (\mbCount ->
@@ -95,6 +103,8 @@ addPoint point dict =
 -- LINE
 
 
+{-| Rasterize a line to points.
+-}
 toPoints : Line -> List Point
 toPoints ( p1, p2 ) =
     let
@@ -120,23 +130,6 @@ toPoints ( p1, p2 ) =
                 , y1 + round (scaleY * toFloat step)
                 )
             )
-
-
-range : Int -> Int -> List Int
-range start end =
-    if start == end then
-        [ end ]
-
-    else
-        start
-            :: range
-                (if end > 0 then
-                    start + 1
-
-                 else
-                    start - 1
-                )
-                end
 
 
 isOrthogonal : Line -> Bool
