@@ -28,7 +28,7 @@ solve : String -> ( Result String String, Result String String )
 solve input =
     let
         result =
-            Util.Parser.run (Util.Parser.parseRowsUsing lineParser) input
+            Util.Parser.run (Util.Parser.parseRowsUsing lineParser |. Parser.end) input
 
         r1 =
             result
