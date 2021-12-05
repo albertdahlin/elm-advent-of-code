@@ -35,6 +35,49 @@ product ( x, y ) =
     x * y
 
 
+sort : Vec2 number -> Vec2 number
+sort ( x, y ) =
+    if x < y then
+        ( x, y )
+
+    else
+        ( y, x )
+
+
+sub : Vec2 number -> Vec2 number -> Vec2 number
+sub ( x1, y1 ) ( x2, y2 ) =
+    ( x2 - x1
+    , y2 - y1
+    )
+
+
+normalize : Vec2 Float -> Vec2 Float
+normalize (( x, y ) as v) =
+    let
+        len =
+            length v
+    in
+    ( x / len
+    , y / len
+    )
+
+
+scaleLongestTo1 : Vec2 Float -> Vec2 Float
+scaleLongestTo1 ( x, y ) =
+    let
+        m =
+            max (abs x) (abs y)
+    in
+    ( x / m
+    , y / m
+    )
+
+
+length : Vec2 Float -> Float
+length ( x, y ) =
+    sqrt (x * x + y * y)
+
+
 manhattanDistance : Vec2 number -> number
 manhattanDistance ( x, y ) =
     abs x + abs y
