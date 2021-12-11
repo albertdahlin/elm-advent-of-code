@@ -1,12 +1,12 @@
 module Year2020.Day11 exposing (..)
 
-import Array exposing (Array)
-import Array.Extra as Array
-import List.Extra as List
 import Performance exposing (Performance)
-import Result.Extra as Result
-import Util.Grid as Grid exposing (Grid)
-import Util.Loop as Loop
+import Util.Mat2d as Mat
+import Util.Vec2 as Vec2
+
+
+type alias Grid =
+    Mat.Mat2d Seat
 
 
 solution =
@@ -18,131 +18,207 @@ solution =
     }
 
 
-type Cell
-    = Occupied
-    | Free
+type Seat
+    = Free
+    | Occupied
     | Floor
 
 
 solve : String -> ( Result String String, Result String String )
 solve input =
     let
-        result : Result String (Grid Cell)
-        result =
-            String.lines input
-                |> List.map
-                    (String.toList
-                        >> List.map charToCell
-                        >> Result.combine
-                        >> Result.map Array.fromList
-                    )
-                |> Result.combine
-                |> Result.andThen
-                    (Array.fromList
-                        >> Grid.fromRows
-                        >> Result.fromMaybe "Mismatching row length"
-                    )
+        grid =
+            parse input
 
-        r1 : Result String Int
         r1 =
-            Result.map
-                (\grid ->
-                    Loop.untilNoChangeIn
-                        occupiedSeats
-                        (nextGridUsing
-                            Grid.adjacent
-                            (\c -> c >= 4)
-                        )
-                        grid
-                )
-                result
+            grid
+                |> untilStable tick 9999999
+                |> String.fromInt
+                |> Ok
 
-        r2 : Result String Int
         r2 =
-            Result.map
-                (\grid ->
-                    Loop.untilNoChangeIn
-                        occupiedSeats
-                        (nextGridUsing
-                            (Grid.lineOfSightUntil ((/=) Floor))
-                            (\c -> c >= 5)
-                        )
-                        grid
-                )
-                result
+            grid
+                |> untilStable tick2 9999999
+                |> String.fromInt
+                |> Ok
     in
-    ( Result.map String.fromInt r1
-    , Result.map String.fromInt r2
+    ( r1
+    , r2
     )
 
 
-occupiedSeats : Grid Cell -> Int
-occupiedSeats =
-    Grid.foldl
-        (\cell prev ->
-            case cell of
-                Occupied ->
-                    1 + prev
+print : Grid -> List String
+print grid =
+    grid
+        |> Mat.map
+            (\_ seat ->
+                case seat of
+                    Free ->
+                        'L'
 
-                _ ->
-                    prev
-        )
-        0
+                    Occupied ->
+                        '#'
+
+                    Floor ->
+                        '.'
+            )
+        |> Mat.rows
+        |> List.map String.fromList
+        |> List.foldl (\r _ -> Debug.log "g" r) ""
+        |> always []
 
 
-nextGridUsing : (( Int, Int ) -> Grid Cell -> List Cell) -> (Int -> Bool) -> Grid Cell -> Grid Cell
-nextGridUsing getNeighbours shouldFree grid =
-    Grid.indexedMap
-        (\pos cell ->
+untilStable : (Grid -> Grid) -> Int -> Grid -> Int
+untilStable fn prev grid =
+    let
+        next =
+            fn grid
+
+        occupied =
+            countOccupied next
+    in
+    if prev == occupied then
+        occupied
+
+    else
+        untilStable fn occupied next
+
+
+tick : Grid -> Grid
+tick grid =
+    Mat.map
+        (\pos seat ->
             let
+                around =
+                    Mat.around pos grid
+
                 occupied =
-                    getNeighbours pos grid
-                        |> List.map
-                            (\seat ->
-                                case seat of
-                                    Occupied ->
-                                        1
-
-                                    Free ->
-                                        0
-
-                                    Floor ->
-                                        0
-                            )
-                        |> List.sum
+                    around
+                        |> List.filter ((==) Occupied)
+                        |> List.length
             in
-            case cell of
-                Free ->
-                    if occupied == 0 then
-                        Occupied
+            if seat == Free && occupied == 0 then
+                Occupied
 
-                    else
-                        cell
+            else if seat == Occupied && occupied >= 4 then
+                Free
 
-                Occupied ->
-                    if shouldFree occupied then
-                        Free
-
-                    else
-                        cell
-
-                Floor ->
-                    Floor
+            else
+                seat
         )
         grid
 
 
-charToCell : Char -> Result String Cell
-charToCell c =
-    case c of
-        'L' ->
-            Ok Free
+countOccupied : Grid -> Int
+countOccupied grid =
+    Mat.foldl
+        (\_ seat count ->
+            if seat == Occupied then
+                count + 1
 
-        '#' ->
-            Ok Occupied
+            else
+                count
+        )
+        0
+        grid
 
-        '.' ->
-            Ok Floor
 
-        _ ->
-            Err ("Unrecongnized char: " ++ String.fromChar c)
+tick2 : Grid -> Grid
+tick2 grid =
+    Mat.map
+        (\pos seat ->
+            let
+                around =
+                    [ visibleSeats pos ( -1, -1 ) grid
+                    , visibleSeats pos ( -1, 0 ) grid
+                    , visibleSeats pos ( -1, 1 ) grid
+                    , visibleSeats pos ( 0, -1 ) grid
+                    , visibleSeats pos ( 0, 1 ) grid
+                    , visibleSeats pos ( 1, -1 ) grid
+                    , visibleSeats pos ( 1, 0 ) grid
+                    , visibleSeats pos ( 1, 1 ) grid
+                    ]
+
+                occupied =
+                    around
+                        |> List.filter ((==) Occupied)
+                        |> List.length
+            in
+            if seat == Free && occupied == 0 then
+                Occupied
+
+            else if seat == Occupied && occupied >= 5 then
+                Free
+
+            else
+                seat
+        )
+        grid
+
+
+visibleSeats : ( Int, Int ) -> ( Int, Int ) -> Grid -> Seat
+visibleSeats pos diff grid =
+    let
+        nextPos =
+            Vec2.add pos diff
+    in
+    case Mat.get nextPos grid of
+        Just Free ->
+            Free
+
+        Just Occupied ->
+            Occupied
+
+        Just Floor ->
+            visibleSeats nextPos diff grid
+
+        Nothing ->
+            Floor
+
+
+test =
+    """L.LL.LL.LL
+LLLLLLL.LL
+L.L.L..L..
+LLLL.LL.LL
+L.LL.LL.LL
+L.LLLLL.LL
+..L.L.....
+LLLLLLLLLL
+L.LLLLLL.L
+L.LLLLL.LL"""
+        |> parse
+
+
+
+-- PARSE
+
+
+parse : String -> Grid
+parse input =
+    let
+        lines =
+            String.lines input
+
+        height =
+            List.length lines
+
+        width =
+            List.head lines
+                |> Maybe.map String.length
+                |> Maybe.withDefault 0
+    in
+    Mat.forLinesAndChars
+        input
+        (\pos char grid ->
+            case char of
+                'L' ->
+                    Mat.set pos Free grid
+
+                '#' ->
+                    Mat.set pos Occupied grid
+
+                _ ->
+                    Mat.set pos Floor grid
+        )
+        (Mat.init ( width, height ) Floor)
