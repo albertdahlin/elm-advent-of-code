@@ -12,6 +12,8 @@ import Year2015.Day08
 import Year2015.Day09
 import Year2015.Day24
 import Year2015.Day25
+import Year2016.Day01
+import Year2019.Day01
 import Year2020.Day01
 import Year2020.Day02
 import Year2020.Day03
@@ -86,6 +88,22 @@ for year day =
 
                 25 ->
                     Just Year2015.Day25.solution
+
+                _ ->
+                    Nothing
+
+        2016 ->
+            case day of
+                1 ->
+                    Just Year2016.Day01.solution
+
+                _ ->
+                    Nothing
+
+        2019 ->
+            case day of
+                1 ->
+                    Just Year2019.Day01.solution
 
                 _ ->
                     Nothing
