@@ -47,27 +47,6 @@ solve input =
     )
 
 
-print : Grid -> List String
-print grid =
-    grid
-        |> Mat.map
-            (\_ seat ->
-                case seat of
-                    Free ->
-                        'L'
-
-                    Occupied ->
-                        '#'
-
-                    Floor ->
-                        '.'
-            )
-        |> Mat.rows
-        |> List.map String.fromList
-        |> List.foldl (\r _ -> Debug.log "g" r) ""
-        |> always []
-
-
 untilStable : (Grid -> Grid) -> Int -> Grid -> Int
 untilStable fn prev grid =
     let

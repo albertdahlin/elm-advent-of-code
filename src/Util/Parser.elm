@@ -101,3 +101,17 @@ newLine : Parser ()
 newLine =
     Parser.chompIf (\c -> c == '\n')
 
+
+int : Parser Int
+int =
+    Parser.chompWhile Char.isDigit
+        |> Parser.getChompedString
+        |> Parser.andThen
+            (\str ->
+                case String.toInt str of
+                    Just i ->
+                        Parser.succeed i
+
+                    Nothing ->
+                        Parser.problem "Not an int"
+            )
