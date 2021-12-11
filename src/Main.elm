@@ -8,6 +8,8 @@ import Html.Attributes as HA
 import Html.Events as Events
 import Performance
 import Solution exposing (Solution)
+import Task
+import Time exposing (Posix)
 import Url exposing (Url)
 
 
@@ -27,14 +29,22 @@ type Msg
     = UrlChanged Url
     | UrlRequested Browser.UrlRequest
     | InputChanged String
+    | GotSolution
+        { year : Int
+        , day : Int
+        , input : String
+        , result1 : Result String String
+        , result2 : Result String String
+        , time : Int
+        }
 
 
 type alias Model =
     { year : Int
     , day : Int
     , input : Dict ( Int, Int ) String
-    , solution1 : Dict ( Int, Int ) (Result String String)
-    , solution2 : Dict ( Int, Int ) (Result String String)
+    , solution1 : Dict ( Int, Int ) ( Result String String, Int )
+    , solution2 : Dict ( Int, Int ) ( Result String String, Int )
     , key : Nav.Key
     }
 
@@ -43,26 +53,20 @@ type alias Flags =
     ()
 
 
-initModel : Url -> Nav.Key -> Model
-initModel url key =
+init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url key =
     let
         ( year, day, input ) =
             parseUrl url
     in
-    { year = year
-    , day = day
-    , input = Dict.singleton ( year, day ) input
-    , solution1 = Dict.empty
-    , solution2 = Dict.empty
-    , key = key
-    }
-        |> solveFor input
-
-
-init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
-    ( initModel url key
-    , Cmd.none
+    ( { year = year
+      , day = day
+      , input = Dict.singleton ( year, day ) input
+      , solution1 = Dict.empty
+      , solution2 = Dict.empty
+      , key = key
+      }
+    , solve year day input
     )
 
 
@@ -96,7 +100,23 @@ update msg model =
                 , day = day
                 , input = Dict.insert ( year, day ) input model.input
               }
-                |> solveFor input
+            , solve year day input
+            )
+
+        GotSolution args ->
+            ( { model
+                | input = Dict.insert ( args.year, args.day ) args.input model.input
+                , solution1 =
+                    Dict.insert
+                        ( args.year, args.day )
+                        ( args.result1, args.time )
+                        model.solution1
+                , solution2 =
+                    Dict.insert
+                        ( args.year, args.day )
+                        ( args.result2, args.time )
+                        model.solution2
+              }
             , Cmd.none
             )
 
@@ -110,12 +130,12 @@ update msg model =
                 , solution1 =
                     Dict.insert
                         ( model.year, model.day )
-                        (Err "--calculating--")
+                        ( Err "--calculating--", 0 )
                         model.solution1
                 , solution2 =
                     Dict.insert
                         ( model.year, model.day )
-                        (Err "--calculating--")
+                        ( Err "--calculating--", 0 )
                         model.solution2
               }
             , toLink model.year (Just model.day) str
@@ -123,30 +143,46 @@ update msg model =
             )
 
 
-solveFor : String -> Model -> Model
-solveFor input model =
+solve : Int -> Int -> String -> Cmd Msg
+solve year day input =
     if String.isEmpty input then
-        { model
-            | solution1 = Dict.insert ( model.year, model.day ) (Err "--empty--") model.solution1
-            , solution2 = Dict.insert ( model.year, model.day ) (Err "--empty--") model.solution2
+        { year = year
+        , day = day
+        , input = input
+        , result1 = Err "-empty-"
+        , result2 = Err "-empty-"
+        , time = 0
         }
+            |> Task.succeed
+            |> Task.perform GotSolution
 
     else
-        case
-            Solution.for model.year model.day
-        of
-            Just solution ->
-                let
-                    ( r1, r2 ) =
-                        solution.solve input
-                in
-                { model
-                    | solution1 = Dict.insert ( model.year, model.day ) r1 model.solution1
-                    , solution2 = Dict.insert ( model.year, model.day ) r2 model.solution2
-                }
+        case Solution.for year day of
+            Just solver ->
+                Time.now
+                    |> Task.andThen
+                        (\start ->
+                            Task.succeed input
+                                |> Task.map solver.solve
+                                |> Task.andThen
+                                    (\( r1, r2 ) ->
+                                        Time.now
+                                            |> Task.map
+                                                (\end ->
+                                                    { year = year
+                                                    , day = day
+                                                    , input = input
+                                                    , result1 = r1
+                                                    , result2 = r2
+                                                    , time = Time.posixToMillis end - Time.posixToMillis start
+                                                    }
+                                                )
+                                    )
+                        )
+                    |> Task.perform GotSolution
 
             Nothing ->
-                model
+                Cmd.none
 
 
 parseUrl : Url -> ( Int, Int, String )
@@ -309,8 +345,7 @@ view_Description model solution =
                 , Html.text " on adventofcode.com"
                 ]
             , Html.div
-                [
-                ]
+                []
                 [ Html.text "- Check my "
                 , Html.a
                     [ HA.href (linkToGithub model.year model.day)
@@ -329,11 +364,11 @@ view_Solution model =
     let
         r1 =
             Dict.get ( model.year, model.day ) model.solution1
-                |> Maybe.withDefault (Err "--none--")
+                |> Maybe.withDefault ( Err "--none--", 0 )
 
         r2 =
             Dict.get ( model.year, model.day ) model.solution2
-                |> Maybe.withDefault (Err "--none--")
+                |> Maybe.withDefault ( Err "--none--", 0 )
 
         input =
             Dict.get ( model.year, model.day ) model.input
@@ -366,18 +401,22 @@ view_Input input =
         ]
 
 
-view_ResultRow : Result String String -> Result String String -> Html Msg
-view_ResultRow r1 r2 =
+view_ResultRow : ( Result String String, Int ) -> ( Result String String, Int ) -> Html Msg
+view_ResultRow ( r1, t1 ) ( r2, t2 ) =
     Html.div
         [ HA.class "column space-sm"
         ]
-        [ view_Result "Part 1" r1
-        , view_Result "Part 2" r2
+        [ view_Result "Part 1" r1 t1
+        , view_Result "Part 2" r2 t2
+        , Html.div
+            []
+            [ Html.text ("Solved in " ++ String.fromInt t1 ++ "ms")
+            ]
         ]
 
 
-view_Result : String -> Result String String -> Html Msg
-view_Result label result =
+view_Result : String -> Result String String -> Int -> Html Msg
+view_Result label result time =
     Html.div
         [ HA.class "row space-sm center-y"
         ]
@@ -555,6 +594,7 @@ a.yellow {
     background: #111;
     outline: solid 1px #333;
     padding: 0.2em;
+    white-space: pre;
 }
 .look-like-ok {
     color: #009900;
