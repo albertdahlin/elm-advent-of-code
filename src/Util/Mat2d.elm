@@ -28,7 +28,7 @@ getBounded ( x, y ) (Mat2d w h arr) =
             a
 
         Nothing ->
-            Debug.todo "out of bounds"
+            getBounded ( x, y ) (Mat2d w h arr)
 
 
 getWrap : ( Int, Int ) -> Mat2d a -> a
@@ -38,7 +38,7 @@ getWrap ( x, y ) (Mat2d w h arr) =
             a
 
         Nothing ->
-            Debug.todo "out of bounds"
+            getWrap ( x, y ) (Mat2d w h arr)
 
 
 set : ( Int, Int ) -> a -> Mat2d a -> Mat2d a
