@@ -252,7 +252,7 @@ view_Header model =
                 Nothing ->
                     False
     in
-    [ List.range 2015 2021
+    [ List.range 2015 2022
         |> List.map
             (\y ->
                 Html.a
