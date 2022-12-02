@@ -42,6 +42,7 @@ import Year2021.Day10
 import Year2021.Day11
 import Year2021.Day12
 import Year2022.Day01
+import Year2022.Day02
 
 
 type alias Solution =
@@ -205,6 +206,9 @@ for year day =
             case day of
                 1 ->
                     Just Year2022.Day01.solution
+
+                2 ->
+                    Just Year2022.Day02.solution
 
                 _ ->
                     Nothing
