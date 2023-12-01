@@ -60,6 +60,60 @@ type alias Solution =
 solutions : Dict ( Int, Int ) Solution
 solutions =
     [ ( ( 2015, 1 ), Year2015.Day01.solution )
+    , ( ( 2015, 2 ), Year2015.Day02.solution )
+    , ( ( 2015, 3 ), Year2015.Day03.solution )
+    , ( ( 2015, 4 ), Year2015.Day04.solution )
+    , ( ( 2015, 5 ), Year2015.Day05.solution )
+    , ( ( 2015, 6 ), Year2015.Day06.solution )
+    , ( ( 2015, 7 ), Year2015.Day07.solution )
+    , ( ( 2015, 8 ), Year2015.Day08.solution )
+    , ( ( 2015, 9 ), Year2015.Day09.solution )
+    , ( ( 2015, 24 ), Year2015.Day24.solution )
+    , ( ( 2015, 25 ), Year2015.Day25.solution )
+
+    -- 2016
+    , ( ( 2016, 1 ), Year2016.Day01.solution )
+
+    -- 2019
+    , ( ( 2019, 1 ), Year2019.Day01.solution )
+
+    -- 2020
+    , ( ( 2020, 1 ), Year2020.Day01.solution )
+    , ( ( 2020, 2 ), Year2020.Day02.solution )
+    , ( ( 2020, 3 ), Year2020.Day03.solution )
+    , ( ( 2020, 4 ), Year2020.Day04.solution )
+    , ( ( 2020, 5 ), Year2020.Day05.solution )
+    , ( ( 2020, 6 ), Year2020.Day06.solution )
+    , ( ( 2020, 7 ), Year2020.Day07.solution )
+    , ( ( 2020, 8 ), Year2020.Day08.solution )
+    , ( ( 2020, 9 ), Year2020.Day09.solution )
+    , ( ( 2020, 10 ), Year2020.Day10.solution )
+    , ( ( 2020, 11 ), Year2020.Day11.solution )
+    , ( ( 2020, 12 ), Year2020.Day12.solution )
+    , ( ( 2020, 13 ), Year2020.Day13.solution )
+    , ( ( 2020, 14 ), Year2020.Day14.solution )
+    , ( ( 2020, 15 ), Year2020.Day15.solution )
+
+    -- 2021
+    , ( ( 2021, 1 ), Year2021.Day01.solution )
+    , ( ( 2021, 2 ), Year2021.Day02.solution )
+    , ( ( 2021, 3 ), Year2021.Day03.solution )
+    , ( ( 2021, 4 ), Year2021.Day04.solution )
+    , ( ( 2021, 5 ), Year2021.Day05.solution )
+    , ( ( 2021, 6 ), Year2021.Day06.solution )
+    , ( ( 2021, 7 ), Year2021.Day07.solution )
+    , ( ( 2021, 8 ), Year2021.Day08.solution )
+    , ( ( 2021, 9 ), Year2021.Day09.solution )
+    , ( ( 2021, 10 ), Year2021.Day10.solution )
+    , ( ( 2021, 11 ), Year2021.Day11.solution )
+    , ( ( 2021, 12 ), Year2021.Day12.solution )
+
+    -- 2022
+    , ( ( 2022, 1 ), Year2022.Day01.solution )
+    , ( ( 2022, 2 ), Year2022.Day02.solution )
+    , ( ( 2022, 7 ), Year2022.Day07.solution )
+
+    -- 2023
     , ( ( 2023, 1 ), Year2023.Day01.solution )
     ]
         |> Dict.fromList
@@ -67,173 +121,4 @@ solutions =
 
 for : Int -> Int -> Maybe Solution
 for year day =
-    case year of
-        2015 ->
-            case day of
-                1 ->
-                    Just Year2015.Day01.solution
-
-                2 ->
-                    Just Year2015.Day02.solution
-
-                3 ->
-                    Just Year2015.Day03.solution
-
-                4 ->
-                    Just Year2015.Day04.solution
-
-                5 ->
-                    Just Year2015.Day05.solution
-
-                6 ->
-                    Just Year2015.Day06.solution
-
-                7 ->
-                    Just Year2015.Day07.solution
-
-                8 ->
-                    Just Year2015.Day08.solution
-
-                9 ->
-                    Just Year2015.Day09.solution
-
-                24 ->
-                    Just Year2015.Day24.solution
-
-                25 ->
-                    Just Year2015.Day25.solution
-
-                _ ->
-                    Nothing
-
-        2016 ->
-            case day of
-                1 ->
-                    Just Year2016.Day01.solution
-
-                _ ->
-                    Nothing
-
-        2019 ->
-            case day of
-                1 ->
-                    Just Year2019.Day01.solution
-
-                _ ->
-                    Nothing
-
-        2020 ->
-            case day of
-                1 ->
-                    Just Year2020.Day01.solution
-
-                2 ->
-                    Just Year2020.Day02.solution
-
-                3 ->
-                    Just Year2020.Day03.solution
-
-                4 ->
-                    Just Year2020.Day04.solution
-
-                5 ->
-                    Just Year2020.Day05.solution
-
-                6 ->
-                    Just Year2020.Day06.solution
-
-                7 ->
-                    Just Year2020.Day07.solution
-
-                8 ->
-                    Just Year2020.Day08.solution
-
-                9 ->
-                    Just Year2020.Day09.solution
-
-                10 ->
-                    Just Year2020.Day10.solution
-
-                11 ->
-                    Just Year2020.Day11.solution
-
-                12 ->
-                    Just Year2020.Day12.solution
-
-                13 ->
-                    Just Year2020.Day13.solution
-
-                14 ->
-                    Just Year2020.Day14.solution
-
-                15 ->
-                    Just Year2020.Day15.solution
-
-                _ ->
-                    Nothing
-
-        2021 ->
-            case day of
-                1 ->
-                    Just Year2021.Day01.solution
-
-                2 ->
-                    Just Year2021.Day02.solution
-
-                3 ->
-                    Just Year2021.Day03.solution
-
-                4 ->
-                    Just Year2021.Day04.solution
-
-                5 ->
-                    Just Year2021.Day05.solution
-
-                6 ->
-                    Just Year2021.Day06.solution
-
-                7 ->
-                    Just Year2021.Day07.solution
-
-                8 ->
-                    Just Year2021.Day08.solution
-
-                9 ->
-                    Just Year2021.Day09.solution
-
-                10 ->
-                    Just Year2021.Day10.solution
-
-                11 ->
-                    Just Year2021.Day11.solution
-
-                12 ->
-                    Just Year2021.Day12.solution
-
-                _ ->
-                    Nothing
-
-        2022 ->
-            case day of
-                1 ->
-                    Just Year2022.Day01.solution
-
-                2 ->
-                    Just Year2022.Day02.solution
-
-                7 ->
-                    Just Year2022.Day07.solution
-
-                _ ->
-                    Nothing
-
-        2023 ->
-            case day of
-                1 ->
-                    Just Year2023.Day01.solution
-
-                _ ->
-                    Nothing
-
-        _ ->
-            Nothing
+    Dict.get ( year, day ) solutions

@@ -10,7 +10,7 @@ import Result.Extra as Result
 solution =
     { solve = solve
     , title = "Trebuchet?!"
-    , subtitle = ""
+    , subtitle = "Find the calibration value from a newly-improved document."
     , tests = []
     , performance = Performance.Acceptable
     }
