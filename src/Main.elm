@@ -252,7 +252,7 @@ view_Header model =
                 Nothing ->
                     False
     in
-    [ List.range 2015 2022
+    [ List.range 2015 2023
         |> List.map
             (\y ->
                 Html.a
@@ -594,7 +594,7 @@ a.yellow {
     background: #111;
     outline: solid 1px #333;
     padding: 0.2em;
-    white-space: pre;
+    white-space: pre-wrap;
 }
 .look-like-ok {
     color: #009900;

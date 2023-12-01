@@ -1,5 +1,6 @@
 module Solution exposing (..)
 
+import Dict exposing (Dict)
 import Performance exposing (Performance)
 import Year2015.Day01
 import Year2015.Day02
@@ -43,6 +44,8 @@ import Year2021.Day11
 import Year2021.Day12
 import Year2022.Day01
 import Year2022.Day02
+import Year2022.Day07
+import Year2023.Day01
 
 
 type alias Solution =
@@ -52,6 +55,14 @@ type alias Solution =
     , tests : List ( String, String )
     , performance : Performance
     }
+
+
+solutions : Dict ( Int, Int ) Solution
+solutions =
+    [ ( ( 2015, 1 ), Year2015.Day01.solution )
+    , ( ( 2023, 1 ), Year2023.Day01.solution )
+    ]
+        |> Dict.fromList
 
 
 for : Int -> Int -> Maybe Solution
@@ -209,6 +220,17 @@ for year day =
 
                 2 ->
                     Just Year2022.Day02.solution
+
+                7 ->
+                    Just Year2022.Day07.solution
+
+                _ ->
+                    Nothing
+
+        2023 ->
+            case day of
+                1 ->
+                    Just Year2023.Day01.solution
 
                 _ ->
                     Nothing
