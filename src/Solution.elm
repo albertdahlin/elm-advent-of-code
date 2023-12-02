@@ -46,6 +46,7 @@ import Year2022.Day01
 import Year2022.Day02
 import Year2022.Day07
 import Year2023.Day01
+import Year2023.Day02
 
 
 type alias Solution =
@@ -115,6 +116,7 @@ solutions =
 
     -- 2023
     , ( ( 2023, 1 ), Year2023.Day01.solution )
+    , ( ( 2023, 2 ), Year2023.Day02.solution )
     ]
         |> Dict.fromList
 
