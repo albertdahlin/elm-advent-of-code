@@ -1,18 +1,16 @@
 module Year2023.Day02 exposing (..)
 
 import Dict exposing (Dict)
-import List.Extra as List
 import Parser exposing ((|.), (|=), Parser)
 import Performance exposing (Performance)
 import Result.Extra as Result
 import Util.Parser
-import Util.Regex
 
 
 solution =
     { solve = solve
     , title = "Cube Conundrum"
-    , subtitle = ""
+    , subtitle = "Figure out some information about cubes in a bag."
     , tests = []
     , performance = Performance.Acceptable
     }
@@ -25,25 +23,23 @@ type alias Game =
 
 
 parseInput : String -> Result String (List Game)
-parseInput input =
-    String.lines input
-        |> List.map
-            (\line ->
-                Result.map2 Game
-                    (Util.Regex.parseInt "Game (\\d+)" line)
-                    (Util.Regex.parsePairs "(\\d+) (\\w+)" line
-                        |> Result.andThen
-                            (List.map
-                                (\( qtyString, color ) ->
-                                    String.toInt qtyString
-                                        |> Result.fromMaybe "Not a number"
-                                        |> Result.map (\qty -> ( qty, color ))
-                                )
-                                >> Result.combine
-                            )
-                    )
-            )
-        |> Result.combine
+parseInput =
+    Util.Parser.run
+        (Parser.succeed Game
+            |. Parser.token "Game"
+            |. Parser.spaces
+            |= Util.Parser.int
+            |. Parser.symbol ":"
+            |. Parser.spaces
+            |= Util.Parser.listSeparatedBy
+                (Util.Parser.atLeastOneOf [ ';', ',', ' ' ])
+                (Parser.succeed Tuple.pair
+                    |= Util.Parser.int
+                    |. Parser.spaces
+                    |= Util.Parser.alpha
+                )
+            |> Util.Parser.lines
+        )
 
 
 solve1 : List Game -> String
@@ -98,15 +94,7 @@ solve input =
     let
         parsedInput =
             parseInput input
-
-        part1 =
-            parsedInput
-                |> Result.map solve1
-
-        part2 =
-            parsedInput
-                |> Result.map solve2
     in
-    ( part1
-    , part2
+    ( Result.map solve1 parsedInput
+    , Result.map solve2 parsedInput
     )

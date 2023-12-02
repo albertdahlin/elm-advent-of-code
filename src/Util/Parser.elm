@@ -89,6 +89,37 @@ parseRowsUsing parser =
         )
 
 
+lines : Parser a -> Parser (List a)
+lines parser =
+    Parser.loop []
+        (\xs ->
+            Parser.oneOf
+                [ Parser.succeed (\x -> Parser.Loop (x :: xs))
+                    |= parser
+                    |. Parser.chompWhile (\c -> c == '\n' || c == '\u{000D}')
+                , Parser.succeed (Parser.Done <| List.reverse xs)
+                ]
+        )
+
+
+listSeparatedBy : Parser () -> Parser a -> Parser (List a)
+listSeparatedBy separator parser =
+    Parser.loop []
+        (\xs ->
+            parser
+                |> Parser.andThen
+                    (\x ->
+                        Parser.oneOf
+                            [ separator
+                                |> Parser.map
+                                    (\_ -> Parser.Loop (x :: xs))
+                            , Parser.succeed
+                                (Parser.Done <| List.reverse <| x :: xs)
+                            ]
+                    )
+        )
+
+
 alpha : Parser String
 alpha =
     Parser.succeed ()
@@ -100,6 +131,13 @@ alpha =
 newLine : Parser ()
 newLine =
     Parser.chompIf (\c -> c == '\n')
+
+
+atLeastOneOf : List Char -> Parser ()
+atLeastOneOf chars =
+    Parser.succeed ()
+        |. Parser.chompIf (\c -> List.member c chars)
+        |. Parser.chompWhile (\c -> List.member c chars)
 
 
 int : Parser Int
