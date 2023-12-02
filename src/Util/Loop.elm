@@ -16,6 +16,15 @@ loop state fn =
             d
 
 
+repeat : Int -> (a -> a) -> a -> a
+repeat n fn a =
+    if n == 0 then
+        a
+
+    else
+        repeat (n - 1) fn (fn a)
+
+
 untilNoChangeIn : (state -> result) -> (state -> state) -> state -> result
 untilNoChangeIn toRes fn state =
     repeatUntilNoChangeHelp (toRes state) fn toRes (fn state)

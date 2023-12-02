@@ -11,6 +11,7 @@ import Year2015.Day06
 import Year2015.Day07
 import Year2015.Day08
 import Year2015.Day09
+import Year2015.Day10
 import Year2015.Day24
 import Year2015.Day25
 import Year2016.Day01
@@ -69,6 +70,7 @@ solutions =
     , ( ( 2015, 7 ), Year2015.Day07.solution )
     , ( ( 2015, 8 ), Year2015.Day08.solution )
     , ( ( 2015, 9 ), Year2015.Day09.solution )
+    , ( ( 2015, 10 ), Year2015.Day10.solution )
     , ( ( 2015, 24 ), Year2015.Day24.solution )
     , ( ( 2015, 25 ), Year2015.Day25.solution )
 
