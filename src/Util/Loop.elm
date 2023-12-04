@@ -25,6 +25,24 @@ repeat n fn a =
         repeat (n - 1) fn (fn a)
 
 
+repeatUntil : (a -> Bool) -> (a -> a) -> a -> a
+repeatUntil isDone fn a =
+    if isDone a then
+        a
+
+    else
+        repeatUntil isDone fn (fn a)
+
+
+repeatWhile : (a -> Bool) -> (a -> a) -> a -> a
+repeatWhile isGood fn a =
+    if isGood a then
+        repeatWhile isGood fn (fn a)
+
+    else
+        a
+
+
 untilNoChangeIn : (state -> result) -> (state -> state) -> state -> result
 untilNoChangeIn toRes fn state =
     repeatUntilNoChangeHelp (toRes state) fn toRes (fn state)
