@@ -10,14 +10,14 @@ run parser str =
 
 
 firstErrorMsg : List Parser.DeadEnd -> String
-firstErrorMsg list =
-    errorMsg list
-        |> List.head
-        |> Maybe.withDefault "No Error"
+firstErrorMsg =
+    errorMsg
+        >> List.head
+        >> Maybe.withDefault "No Error"
 
 
 errorMsg : List Parser.DeadEnd -> List String
-errorMsg list =
+errorMsg =
     List.map
         (\deadEnd ->
             "Parse error at row "
@@ -27,7 +27,6 @@ errorMsg list =
                 ++ ": "
                 ++ problemToString deadEnd.problem
         )
-        list
 
 
 problemToString : Parser.Problem -> String
@@ -117,6 +116,20 @@ listSeparatedBy separator parser =
                                 (Parser.Done <| List.reverse <| x :: xs)
                             ]
                     )
+        )
+
+
+listWhile : Parser a -> Parser (List a)
+listWhile parser =
+    Parser.loop []
+        (\xs ->
+            Parser.oneOf
+                [ parser
+                    |> Parser.map
+                        (\x -> Parser.Loop (x :: xs))
+                , Parser.succeed
+                    (Parser.Done <| List.reverse xs)
+                ]
         )
 
 
