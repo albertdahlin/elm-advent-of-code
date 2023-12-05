@@ -1,7 +1,5 @@
 module Year2023.Day05 exposing (..)
 
-import Dict exposing (Dict)
-import List.Extra
 import Parser exposing ((|.), (|=), Parser)
 import Performance exposing (Performance)
 import Set exposing (Set)
