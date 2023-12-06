@@ -145,8 +145,8 @@ convertRanges rows ranges =
                 row :: nextRows ->
                     if max < row.from then
                         {- Before, no overlap: min < from && max < from
-                           ----------|from-to|-
-                           -|min-max|----------
+                           ----------|from-to|-  <- row in map
+                           -|min-max|----------  <- current range
                         -}
                         ( min, max ) :: convertRanges rows nextRanges
 
