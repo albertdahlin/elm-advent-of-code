@@ -170,9 +170,11 @@ handTypeWithJoker hand =
                             ( mostCommonCard, freq + jokerFreq ) :: cards
 
                         _ ->
-                            frequencies
+                            -- Hand consists of only jokers
+                            [ ( 0, jokerFreq ) ]
 
                 _ ->
+                    -- Hand has no jokers
                     frequencies
     in
     List.map Tuple.second jokerAddedToMostCommonCard
