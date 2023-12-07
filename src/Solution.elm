@@ -53,6 +53,7 @@ import Year2023.Day03
 import Year2023.Day04
 import Year2023.Day05
 import Year2023.Day06
+import Year2023.Day07
 
 
 
@@ -130,6 +131,7 @@ solutions =
     , ( ( 2023, 4 ), Year2023.Day04.solution )
     , ( ( 2023, 5 ), Year2023.Day05.solution )
     , ( ( 2023, 6 ), Year2023.Day06.solution )
+    , ( ( 2023, 7 ), Year2023.Day07.solution )
     ]
         |> Dict.fromList
 

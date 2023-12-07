@@ -141,6 +141,13 @@ alpha =
         |> Parser.getChompedString
 
 
+nonEmptyStringWhile : (Char -> Bool) -> Parser String
+nonEmptyStringWhile isGood =
+    Parser.chompIf isGood
+        |. Parser.chompWhile isGood
+        |> Parser.getChompedString
+
+
 newLine : Parser ()
 newLine =
     Parser.chompIf (\c -> c == '\n')
