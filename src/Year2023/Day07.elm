@@ -44,7 +44,10 @@ Value zero is reserved for the Joker card
 -}
 cardValues : Dict Char Int
 cardValues =
-    [ 'A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2' ]
+    -- Copy & paste from AOC page
+    "A, K, Q, J, T, 9, 8, 7, 6, 5, 4, 3, 2"
+        |> String.toList
+        |> List.filter Char.isAlphaNum
         |> List.reverse
         |> List.indexedMap (\i card -> ( card, i + 1 ))
         |> Dict.fromList
