@@ -252,7 +252,7 @@ view_Header model =
                 Nothing ->
                     False
     in
-    [ List.range 2015 2023
+    [ List.range 2015 2024
         |> List.map
             (\y ->
                 Html.a
@@ -496,19 +496,7 @@ classIf pred name =
 css : String
 css =
     """
-body {
-    font-family: monospace;
-    font-size: 18px;
-    background: #0f0f23;
-    color: #cccccc;
-    line-height: 1.15;
-}
 
-.footer {
-    position: fixed;
-    bottom: 0.5em;
-    align-self: flex-end;
-}
 
 .row {
     display: flex;
